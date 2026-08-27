@@ -19,5 +19,4 @@ Repository for IS 310 Assignments
 
 4. Hypothesis Username: cicizhu2
 
-5. AI Tool/Workflow
-GitHub Copilot, Gemini, Claude, or ChatGPT (depending on the purpose).
+5. AI Tool/Workflow: GitHub Copilot, Gemini, Claude, or ChatGPT (depending on the purpose).
