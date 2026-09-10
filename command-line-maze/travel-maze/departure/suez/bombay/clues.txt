@@ -1,0 +1,3 @@
+You've reached Bombay, a city that is on the list. The itinerary gives a 3-day rail leg followed immediately by a 13-day steamer voyage. One of these two cities is just the changeover point. The other is where the next major leg actually ends.
+
+Enter the folder for the city where the NEXT leg begins.

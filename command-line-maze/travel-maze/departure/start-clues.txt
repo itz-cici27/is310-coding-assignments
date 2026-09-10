@@ -1,0 +1,9 @@
+Welcome aboard to the maze of Around the World in Eighty Days!
+
+On October 2nd, 1872, Phileas Fogg wagered £20,000 at the Reform Club that he could circle the globe in 80 days. Your goal is to find the correct route he takes to travel the world using the command line as navigation. 
+
+Before you take a step, open around-the-world-in-80-days.txt and find Chapter III, where John Sullivan reads out the Daily Telegraph's official itinerary.
+
+Only the cities on THAT list are safe stops. Anywhere else is a detour, and detours in this maze are dead ends.
+
+Enter the folder named for the first city on the official list.
