@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Media Use Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef1f4;
+    --surface: #ffffff;
+    --ink: #1c2833;
+    --muted: #5a6875;
+    --line: #d3dae1;
+    --accent: #136f63;
+    --accent-ink: #ffffff;
+    --warn-bg: #fdf0d5;
+    --warn-ink: #7a4b00;
+    --error: #b42318;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #141a20;
+      --surface: #1d252d;
+      --ink: #e6ebef;
+      --muted: #9aa8b4;
+      --line: #33404b;
+      --accent: #4fc1b0;
+      --accent-ink: #0d1a18;
+      --warn-bg: #3d2f12;
+      --warn-ink: #f3cf8a;
+      --error: #ff8a80;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  main { max-width: 44rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 0.5rem; }
+  h2 { font-size: 1.25rem; margin: 0 0 1rem; }
+  .intro { color: var(--muted); margin: 0 0 0.25rem; max-width: 36rem; }
+  .total { margin: 0 0 2rem; font-weight: 700; }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; }
+  .full { grid-column: 1 / -1; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+  label, legend { display: block; font-weight: 700; margin-bottom: 0.3rem; }
+  .hint { font-weight: 400; color: var(--muted); }
+  input, select, textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.55rem 0.65rem;
+  }
+  textarea { resize: vertical; min-height: 4rem; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  .radio-row { display: flex; gap: 1.25rem; }
+  .radio-row label { display: flex; align-items: center; gap: 0.4rem; font-weight: 400; margin: 0; }
+  .radio-row input { width: auto; }
+
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  [aria-invalid="true"] { border-color: var(--error); }
+  .error { color: var(--error); font-size: 0.9rem; margin: 0.25rem 0 0; min-height: 1.2em; }
+
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+  button {
+    font: inherit;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+    border: 1px solid var(--accent);
+  }
+  .primary { background: var(--accent); color: var(--accent-ink); }
+  .secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  dl.review { display: grid; grid-template-columns: max-content 1fr; gap: 0.4rem 1.25rem; margin: 0; }
+  dl.review dt { color: var(--muted); }
+  dl.review dd { margin: 0; font-weight: 700; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 700; white-space: nowrap; }
+  td:first-child { white-space: nowrap; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .chip { display: inline-block; padding: 0.05rem 0.5rem; border-radius: 999px; font-size: 0.85rem; }
+  .chip.yes { background: var(--warn-bg); color: var(--warn-ink); }
+  .empty { color: var(--muted); margin: 0; }
+  .status { color: var(--accent); font-weight: 700; margin: 0.75rem 0 0; min-height: 1.5em; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Social Media Use Diary</h1>
+  <p class="intro">Log each time you used a social media app today. Review each entry before saving it, then download your entries as a CSV file.</p>
+  <p class="total" id="total">No entries logged yet.</p>
+
+  <section id="form-section" aria-labelledby="form-heading">
+    <h2 id="form-heading">New entry</h2>
+    <form id="entry-form" novalidate>
+      <div class="grid">
+        <div>
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required>
+          <p class="error" id="date-error"></p>
+        </div>
+        <div>
+          <label for="platform">Platform</label>
+          <select id="platform" name="platform" required>
+            <option value="">Choose a platform</option>
+            <option>Instagram</option>
+            <option>TikTok</option>
+            <option>YouTube</option>
+            <option>Snapchat</option>
+            <option>X</option>
+            <option>Reddit</option>
+            <option>Discord</option>
+            <option>Other</option>
+          </select>
+          <p class="error" id="platform-error"></p>
+        </div>
+        <div>
+          <label for="minutes">Minutes spent</label>
+          <input type="number" id="minutes" name="minutes" min="1" step="1" inputmode="numeric" required>
+          <p class="error" id="minutes-error"></p>
+        </div>
+        <div>
+          <label for="time_of_day">Time of day</label>
+          <select id="time_of_day" name="time_of_day" required>
+            <option value="">Choose a time</option>
+            <option>Morning</option>
+            <option>Afternoon</option>
+            <option>Evening</option>
+            <option>Late night</option>
+          </select>
+          <p class="error" id="time_of_day-error"></p>
+        </div>
+        <div>
+          <label for="purpose">Main purpose</label>
+          <select id="purpose" name="purpose" required>
+            <option value="">Choose a purpose</option>
+            <option>School</option>
+            <option>Social</option>
+            <option>Entertainment</option>
+            <option>News</option>
+            <option>Other</option>
+          </select>
+          <p class="error" id="purpose-error"></p>
+        </div>
+        <fieldset>
+          <legend>Did this interrupt studying?</legend>
+          <div class="radio-row">
+            <label><input type="radio" name="interrupted_studying" value="Yes" required> Yes</label>
+            <label><input type="radio" name="interrupted_studying" value="No"> No</label>
+          </div>
+          <p class="error" id="interrupted_studying-error"></p>
+        </fieldset>
+        <div class="full">
+          <label for="notes">Notes <span class="hint">(optional)</span></label>
+          <textarea id="notes" name="notes" placeholder="For example: checked messages between classes"></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary">Review entry</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="review-section" aria-labelledby="review-heading" hidden>
+    <h2 id="review-heading">Is this entry correct?</h2>
+    <dl class="review" id="review-list"></dl>
+    <div class="actions">
+      <button type="button" class="primary" id="confirm-btn">Save entry</button>
+      <button type="button" class="secondary" id="edit-btn">Edit entry</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="records-heading">
+    <h2 id="records-heading">Saved entries</h2>
+    <p class="empty" id="empty-msg">Saved entries will appear here. Add at least two to try the download.</p>
+    <div class="table-wrap" id="table-wrap" hidden>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Platform</th><th>Minutes</th><th>Time of day</th>
+            <th>Purpose</th><th>Interrupted studying?</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="records-body"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button type="button" class="primary" id="download-btn" disabled>Download CSV</button>
+    </div>
+    <p class="status" id="status" role="status"></p>
+  </section>
+</main>
+
+<script>
+  // Same fields, in the same order, as the CLI version's CSV.
+  const FIELDS = ["date", "platform", "minutes", "time_of_day", "purpose", "interrupted_studying", "notes"];
+  const LABELS = {
+    date: "Date",
+    platform: "Platform",
+    minutes: "Minutes spent",
+    time_of_day: "Time of day",
+    purpose: "Main purpose",
+    interrupted_studying: "Interrupted studying?",
+    notes: "Notes"
+  };
+  const REQUIRED = FIELDS.filter(field => field !== "notes");
+
+  const form = document.getElementById("entry-form");
+  const formSection = document.getElementById("form-section");
+  const reviewSection = document.getElementById("review-section");
+  const reviewList = document.getElementById("review-list");
+  const recordsBody = document.getElementById("records-body");
+  const tableWrap = document.getElementById("table-wrap");
+  const emptyMsg = document.getElementById("empty-msg");
+  const downloadBtn = document.getElementById("download-btn");
+  const totalEl = document.getElementById("total");
+  const statusEl = document.getElementById("status");
+
+  const records = [];
+  let pendingEntry = null;
+
+  // Default the date to today (local time), matching the CLI.
+  function todayISO() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    return new Date(now - offset).toISOString().slice(0, 10);
+  }
+  document.getElementById("date").value = todayISO();
+
+  function readForm() {
+    const data = new FormData(form);
+    const entry = {};
+    FIELDS.forEach(field => {
+      entry[field] = (data.get(field) || "").toString().trim();
+    });
+    return entry;
+  }
+
+  function setError(field, message) {
+    const errorEl = document.getElementById(field + "-error");
+    if (errorEl) errorEl.textContent = message;
+    const inputs = form.querySelectorAll(`[name="${field}"]`);
+    inputs.forEach(input => input.setAttribute("aria-invalid", message ? "true" : "false"));
+  }
+
+  function validate(entry) {
+    let valid = true;
+    let firstInvalid = null;
+    REQUIRED.forEach(field => {
+      let message = "";
+      if (!entry[field]) {
+        message = `${LABELS[field]} is required.`;
+      } else if (field === "minutes" && (!Number.isInteger(Number(entry.minutes)) || Number(entry.minutes) <= 0)) {
+        message = "Enter a whole number of minutes greater than 0.";
+      }
+      setError(field, message);
+      if (message) {
+        valid = false;
+        if (!firstInvalid) firstInvalid = form.querySelector(`[name="${field}"]`);
+      }
+    });
+    if (firstInvalid) firstInvalid.focus();
+    return valid;
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    statusEl.textContent = "";
+    const entry = readForm();
+    if (!validate(entry)) return;
+
+    pendingEntry = entry;
+    reviewList.innerHTML = "";
+    FIELDS.forEach(field => {
+      const dt = document.createElement("dt");
+      dt.textContent = LABELS[field];
+      const dd = document.createElement("dd");
+      dd.textContent = entry[field] || "None";
+      reviewList.append(dt, dd);
+    });
+    formSection.hidden = true;
+    reviewSection.hidden = false;
+    document.getElementById("confirm-btn").focus();
+  });
+
+  document.getElementById("edit-btn").addEventListener("click", () => {
+    reviewSection.hidden = true;
+    formSection.hidden = false;
+    form.querySelector("input, select").focus();
+  });
+
+  document.getElementById("confirm-btn").addEventListener("click", () => {
+    records.push(pendingEntry);
+    pendingEntry = null;
+    renderRecords();
+    form.reset();
+    document.getElementById("date").value = todayISO();
+    reviewSection.hidden = true;
+    formSection.hidden = false;
+    statusEl.textContent = `Entry saved. You have ${records.length} saved ${records.length === 1 ? "entry" : "entries"}.`;
+    document.getElementById("date").focus();
+  });
+
+  function renderRecords() {
+    recordsBody.innerHTML = "";
+    records.forEach(entry => {
+      const row = document.createElement("tr");
+      FIELDS.forEach(field => {
+        const cell = document.createElement("td");
+        if (field === "minutes") cell.className = "num";
+        if (field === "interrupted_studying") {
+          const chip = document.createElement("span");
+          chip.className = "chip" + (entry[field] === "Yes" ? " yes" : "");
+          chip.textContent = entry[field];
+          cell.append(chip);
+        } else {
+          cell.textContent = entry[field];
+        }
+        row.append(cell);
+      });
+      recordsBody.append(row);
+    });
+
+    const hasRecords = records.length > 0;
+    tableWrap.hidden = !hasRecords;
+    emptyMsg.hidden = hasRecords;
+    downloadBtn.disabled = !hasRecords;
+
+    const totalMinutes = records.reduce((sum, entry) => sum + Number(entry.minutes), 0);
+    totalEl.textContent = hasRecords
+      ? `${totalMinutes} minutes logged across ${records.length} ${records.length === 1 ? "entry" : "entries"}.`
+      : "No entries logged yet.";
+  }
+
+  // Quote a value for CSV if it contains a comma, quote, or line break.
+  function csvValue(value) {
+    const text = String(value);
+    return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  downloadBtn.addEventListener("click", () => {
+    const lines = [FIELDS.join(",")];
+    records.forEach(entry => lines.push(FIELDS.map(field => csvValue(entry[field])).join(",")));
+    const blob = new Blob([lines.join("\r\n") + "\r\n"], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "social_media_diary.csv";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "Downloaded social_media_diary.csv. Check your Downloads folder.";
+  });
+</script>
+</body>
+</html>
