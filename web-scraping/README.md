@@ -30,9 +30,9 @@ K-pop is one of South Korea's biggest cultural exports, and Wikipedia is often t
 
 Wikipedia's robots.txt: https://en.wikipedia.org/robots.txt
 
-The `User-agent: *` section (which applies to my scraper) disallows dynamically generated pages and tools, such as `/w/`, `/api/`, `/trap/`, and `Special:` pages, plus specific administrative pages like deletion discussions and noticeboards. Regular article pages and category pages under `/wiki/` are allowed, which is all my scraper visits. The file also notes that "friendly, low-speed bots are welcome viewing article pages" and warns that bots that go too fast may be blocked, which is why my script waits 1 second between requests. There is no `Crawl-delay` set for general bots.
+The file was way longer than I expected, but most of it is rules for specific bots that have caused problems in the past, like ones that copy entire sites or send requests way too fast. The part that applies to my scraper is the `User-agent: *` section. It blocks things like `/w/`, `/api/`, and `Special:` pages, plus a bunch of admin pages like deletion discussions and noticeboards. Regular article pages and category pages under `/wiki/` are allowed, and those are the only pages my scraper visits. I liked that one of the comments says "friendly, low-speed bots are welcome viewing article pages," and it also warns that bots going too fast might get blocked. There's no `Crawl-delay` for general bots, but I still added a 1 second pause between requests to be safe.
 
-Wikipedia's text is shared under a Creative Commons license, and my scraper only reads public article and category pages. To scrape responsibly, my script sends an honest `User-Agent` with my contact email, waits 1 second between requests, and skips any page that doesn't return a `200` status code.
+Wikipedia's text is shared under a Creative Commons license, so it's meant to be reused as long as it's credited. To be a respectful scraper, my script sends an honest `User-Agent` with my school email so Wikipedia knows who I am, waits between requests, and skips any page that doesn't return a `200` status code.
 
 ## How to Run
 
@@ -55,14 +55,10 @@ I analyzed 40 girl groups and 40 boy bands (the first 40 alphabetically in each 
 
 On average, girl group pages were longer and had more links. But the medians tell a different story: the typical page is about the same length in both categories, and boy band pages actually had slightly more unique links. The averages are pulled up by a few very long pages, like Blackpink (32,877 words), 2NE1, Aespa, and Apink. So the difference seems to come from a handful of very famous groups, not from girl groups getting more attention overall.
 
-## Reflection: What Did I Actually Measure?
+## Reflection
 
-Word counts and link counts are proxies for "attention," not attention itself. A longer page doesn't necessarily mean a group is more popular or more important. A few things could make a page longer that have nothing to do with fan interest:
+Honestly, I went into this thinking word count would be a pretty good way to measure "attention," but the more I looked at my data, the less sure I was! A longer Wikipedia page doesn't automatically mean a group is more popular. Older groups like 2NE1 or 4Minute have just had more years to release music, win awards, and get written about. K-pop pages also tend to have huge discography and awards tables, so a lot of those words are really just lists of songs and trophies. Even the links can be misleading, since the navigation boxes at the bottom of each page link to a bunch of other groups from the same company, which bumps up the count without saying much about the group itself.
 
-- **Age:** Groups that debuted earlier have had more time to release music, win awards, and be written about.
-- **Tables and lists:** K-pop articles often include large discography, awards, and filmography sections, so word counts may reflect *how many releases or awards* a group has rather than how much editors care about them. Citations at the bottom are counted too.
-- **Navigation boxes:** Links at the bottom of an article often point to label-mates and related groups, which inflates link counts without saying much about the group itself.
-- **Language:** This is *English* Wikipedia, so it reflects what English-speaking editors chose to document, not Korean fans or the Korean-language Wikipedia.
-- **Sampling:** I took the first 40 groups alphabetically, not a random sample, so my results might not represent each category as a whole.
+The part that surprised me the most was the difference between averages and medians. If I only looked at the averages, I'd say girl groups get way more attention on Wikipedia. But the medians are almost the same, and boy bands actually had slightly more unique links! It turns out a few really famous groups like Blackpink and Aespa were pulling the girl group average way up. I also learned something from a bug: my first run said every single page had zero links, because Wikipedia formatted its links differently than I expected. If I hadn't noticed, I would have saved a whole column of wrong data without realizing it.
 
-So someone would be wrong to conclude from my data that boy bands (or girl groups) are more popular, more successful, or more culturally important. At most, my data shows where English Wikipedia's documentation is concentrated, and answering *why* would need more evidence, like debut years, edit histories, or page view statistics.
+So someone would be wrong to look at my results and say girl groups (or boy bands) are more popular or more important. My data only covers the first 40 groups alphabetically, it only reflects what English-speaking Wikipedia editors chose to write about, and page length depends on a lot of things besides fan interest. To actually make a claim about attention, I'd want to look at things like debut years, edit histories, or page view statistics too.
